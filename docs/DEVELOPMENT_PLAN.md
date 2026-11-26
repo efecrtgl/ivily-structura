@@ -74,3 +74,23 @@ Each phase: implement → test → review → commit → push → document (CHAN
 Tree-sitter is deferred deliberately: the lexical providers cover dependency extraction for the
 listed languages without native grammar builds; the provider trait allows swapping in a parser per
 language later without changing the pipeline.
+
+## 6. Status (2026-11-27)
+
+| Phase | Status | Verification |
+|---|---|---|
+| 0 Init | done | repo pushed, CI workflow |
+| 1 Scanning & detection | done | unit tests (scanner, explorer, languages, masker, roles) |
+| 2 Dependencies | done | resolver/provider tests; real projects: 0 unresolved imports on two Tauri apps |
+| 3 Health | done | rule trigger/non-trigger tests, layer and entry-point tests |
+| 4 Persistence | done | migrations, backup/restore, corrupt-DB recovery, snapshot import/export tests |
+| 5 Reports & IEP | done | report format tests, IEP validation and read-only tests |
+| 6 UI | done | Vite build, Vitest; app launched and analysis verified end-to-end on a real project |
+| 7 Release | done locally | release workflow; installer built locally with signed updater artifacts. First CI release requires the signing secrets (docs/RELEASING.md). |
+
+### Next steps
+
+- Tree-sitter semantic providers for JS/TS, Rust and Python (symbol references, call graph).
+- IEP named-pipe transport for user-approved `analysis.request` / `project.open`.
+- Localisation (Turkish/English) consistent with other Ivily apps.
+- UI component tests with a mocked IPC layer.

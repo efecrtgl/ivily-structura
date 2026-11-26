@@ -22,3 +22,13 @@ All notable changes to this project are documented here. The format follows
 - Architecture health engine with 25 configurable rules, severity, confidence, evidence and
   suggestions — no aggregate score.
 - Analysis profiles: quick, full, dependencies, security, performance, documentation.
+- SQLite persistence: migrations, integrity checks, corrupt-file recovery, backup/restore; projects
+  with cached latest analysis; custom profiles; settings; history with retention.
+- Snapshots (compressed, SHA-256 verified, export/import) and comparison of analyses/projects.
+- Project mapping: layers, module groups, annotations, relations, notes, visual map.
+- Markdown/JSON/CSV reports and documentation intelligence.
+- Ivily Ecosystem Protocol 0.1 (read-only CLI surface).
+- Desktop UI: dashboard, explorer, architecture graph, health, dependencies, snapshots, mapping,
+  reports, history, settings; custom window frame; dark/light themes.
+- Command-line opening (`ivily-structura.exe <folder> [--analyze]`).
+- Release workflow: NSIS installer, signed updater, portable zip, SHA-256 checksums.
