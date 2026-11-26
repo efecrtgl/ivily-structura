@@ -4,7 +4,9 @@
 //! `providers`, `project`, ...) are plain Rust and do not depend on Tauri.
 
 pub mod analysis;
+pub mod compare;
 pub mod core;
+pub mod db;
 pub mod deps;
 pub mod error;
 pub mod graph;
@@ -15,6 +17,7 @@ pub mod project;
 pub mod providers;
 pub mod report;
 pub mod scan;
+pub mod store;
 
 pub const APP_NAME: &str = "Ivily Structura";
 pub const APP_VERSION: &str = env!("CARGO_PKG_VERSION");
