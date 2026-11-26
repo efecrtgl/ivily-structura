@@ -1,0 +1,69 @@
+name: Bug report
+description: Something does not work as expected.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks! Please do **not** report security issues here — use a
+        [private security advisory](https://github.com/efecrtgl/ivily-structura/security/advisories/new).
+        Remove private paths or project names from anything you paste.
+  - type: input
+    id: version
+    attributes:
+      label: Ivily Structura version
+      description: Shown in Settings → About.
+      placeholder: "0.1.0"
+    validations:
+      required: true
+  - type: input
+    id: windows
+    attributes:
+      label: Windows version
+      placeholder: "Windows 11 24H2"
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Dashboard
+        - Explorer
+        - Dependency graph
+        - File intelligence
+        - Architecture health
+        - Snapshots / comparison
+        - Mapping / annotations
+        - Reports
+        - Settings / profiles
+        - Installer / updates
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: project
+    attributes:
+      label: Project characteristics
+      description: Languages, approximate file count, monorepo? (No source code needed.)
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. ...
+        2. ...
+    validations:
+      required: true

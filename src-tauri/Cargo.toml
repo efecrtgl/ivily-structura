@@ -1,0 +1,47 @@
+[package]
+name = "ivily-structura"
+version = "0.1.0"
+description = "Ivily Structura — local project structure, dependency and architecture analysis"
+authors = ["efecrtgl"]
+license = "MIT"
+repository = "https://github.com/efecrtgl/ivily-structura"
+edition = "2021"
+rust-version = "1.82"
+
+[lib]
+name = "structura_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-dialog = "2"
+tauri-plugin-process = "2"
+tauri-plugin-single-instance = "2"
+tauri-plugin-updater = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+rusqlite = { version = "0.43", features = ["bundled", "backup"] }
+chrono = { version = "0.4", default-features = false, features = ["clock", "serde"] }
+dirs = "6"
+parking_lot = "0.12"
+ignore = "0.4"
+globset = "0.4"
+rayon = "1"
+regex = "1"
+flate2 = "1"
+sha2 = "0.10"
+semver = "1"
+
+[dev-dependencies]
+tempfile = "3"
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = "s"
+panic = "unwind"
+strip = true

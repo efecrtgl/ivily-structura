@@ -1,0 +1,63 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Ivily Structura",
+  "version": "../package.json",
+  "identifier": "com.efecrtgl.ivilystructura",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://127.0.0.1:1440",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "withGlobalTauri": false,
+    "windows": [
+      {
+        "label": "main",
+        "title": "Ivily Structura",
+        "width": 1360,
+        "height": 860,
+        "minWidth": 1024,
+        "minHeight": 640,
+        "center": true,
+        "resizable": true,
+        "decorations": false,
+        "transparent": false,
+        "backgroundColor": "#0B0B0D"
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src ipc: http://ipc.localhost; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'",
+      "freezePrototype": true
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["nsis"],
+    "publisher": "efecrtgl",
+    "homepage": "https://github.com/efecrtgl/ivily-structura",
+    "copyright": "© 2026 efecrtgl",
+    "category": "DeveloperTool",
+    "shortDescription": "Project structure and architecture analysis",
+    "longDescription": "Ivily Structura is an open-source, local-first desktop tool that analyzes, visualizes and documents software project structures, dependencies and architecture health.",
+    "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.ico"],
+    "createUpdaterArtifacts": true,
+    "windows": {
+      "webviewInstallMode": { "type": "downloadBootstrapper", "silent": true },
+      "nsis": {
+        "installMode": "currentUser",
+        "languages": ["English"],
+        "displayLanguageSelector": false,
+        "installerIcon": "icons/icon.ico",
+        "startMenuFolder": "Ivily Structura"
+      }
+    }
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEFERkJDMDBCQkY2MDY1NDEKUldSQlpXQy9DOEQ3cmJHR2RWbWd2VFpLUXl0Q2NtWkFCMzVnYmk2RE1iU0ZSUWtQOEFNaWlUQmUK",
+      "endpoints": ["https://github.com/efecrtgl/ivily-structura/releases/latest/download/latest.json"],
+      "windows": { "installMode": "passive" }
+    }
+  }
+}

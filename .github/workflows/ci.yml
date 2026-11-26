@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+      - name: Version consistency
+        shell: pwsh
+        run: ./scripts/check-version.ps1
+      - run: npm ci
+      - name: UI tests
+        run: npm test
+      - name: UI build
+        run: npm run build
+      - name: Rust format
+        working-directory: src-tauri
+        run: cargo fmt --check
+      - name: Clippy
+        working-directory: src-tauri
+        run: cargo clippy --all-targets --locked -- -D warnings
+      - name: Rust tests
+        working-directory: src-tauri
+        run: cargo test --locked
+
+  audit:
+    # Dependency vulnerability scan. Known vulnerabilities fail the job; "unmaintained"
+    # warnings are only reported.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: npm audit
+        run: npm audit --omit=dev --audit-level=high
+      - uses: dtolnay/rust-toolchain@stable
+      - name: cargo audit
+        working-directory: src-tauri
+        run: |
+          cargo install cargo-audit --locked
+          cargo audit
