@@ -22,6 +22,8 @@ pub struct AppState {
     pub degraded: Option<String>,
     analyses: Mutex<VecDeque<(String, i64, Arc<Analysis>)>>,
     pub jobs: Mutex<Vec<Job>>,
+    /// Folder passed on the command line; consumed once by the UI.
+    pub startup_path: Mutex<Option<String>>,
 }
 
 impl AppState {
@@ -41,7 +43,13 @@ impl AppState {
     }
 
     pub fn with_db(db: Db, degraded: Option<String>) -> Self {
-        Self { db, degraded, analyses: Mutex::new(VecDeque::new()), jobs: Mutex::new(Vec::new()) }
+        Self {
+            db,
+            degraded,
+            analyses: Mutex::new(VecDeque::new()),
+            jobs: Mutex::new(Vec::new()),
+            startup_path: Mutex::new(crate::startup_path(std::env::args())),
+        }
     }
 
     /// Keep an analysis in memory; returns its id.

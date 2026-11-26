@@ -21,6 +21,8 @@ pub struct AppInfo {
     report_sections: &'static [&'static str],
     csv_tables: &'static [&'static str],
     iep_version: &'static str,
+    startup_path: Option<String>,
+    startup_analyze: bool,
 }
 
 #[tauri::command]
@@ -36,6 +38,8 @@ pub fn app_info(state: State<AppState>) -> AppInfo {
         report_sections: crate::report::ALL_SECTIONS,
         csv_tables: crate::report::CSV_TABLES,
         iep_version: crate::iep::PROTOCOL_VERSION,
+        startup_path: state.startup_path.lock().take(),
+        startup_analyze: std::env::args().any(|a| a == "--analyze"),
     }
 }
 

@@ -318,3 +318,64 @@ pub fn report_export(state: State<AppState>, request: ReportRequest, dest: Strin
     );
     Ok(())
 }
+
+/// Save a file produced by the UI (graph image/data). Only image/data extensions are allowed.
+#[tauri::command]
+pub fn file_export(dest: String, content: String, base64: bool) -> AppResult<()> {
+    let p = user_file(&dest, &["png", "svg", "json"], false)?;
+    if content.len() > 64 * 1024 * 1024 {
+        return Err(AppError::validation("too_large", "export is too large"));
+    }
+    let bytes = if base64 {
+        decode_base64(&content).ok_or_else(|| AppError::validation("invalid_data", "invalid base64 data"))?
+    } else {
+        content.into_bytes()
+    };
+    std::fs::write(p, bytes)?;
+    Ok(())
+}
+
+fn decode_base64(s: &str) -> Option<Vec<u8>> {
+    let s = s.split_once(',').map(|x| x.1).unwrap_or(s).trim();
+    let val = |c: u8| -> Option<u32> {
+        Some(match c {
+            b'A'..=b'Z' => (c - b'A') as u32,
+            b'a'..=b'z' => (c - b'a' + 26) as u32,
+            b'0'..=b'9' => (c - b'0' + 52) as u32,
+            b'+' => 62,
+            b'/' => 63,
+            _ => return None,
+        })
+    };
+    let bytes: Vec<u8> = s.bytes().filter(|b| !b.is_ascii_whitespace()).collect();
+    if bytes.len() % 4 != 0 {
+        return None;
+    }
+    let mut out = Vec::with_capacity(bytes.len() / 4 * 3);
+    for chunk in bytes.chunks(4) {
+        let pad = chunk.iter().rev().take_while(|b| **b == b'=').count();
+        let mut n = 0u32;
+        for (i, b) in chunk.iter().enumerate() {
+            n |= if *b == b'=' { 0 } else { val(*b)? } << (18 - 6 * i);
+        }
+        out.push((n >> 16) as u8);
+        if pad < 2 {
+            out.push((n >> 8) as u8);
+        }
+        if pad < 1 {
+            out.push(n as u8);
+        }
+    }
+    Some(out)
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn base64_decoding() {
+        assert_eq!(super::decode_base64("data:image/png;base64,aGVsbG8=").unwrap(), b"hello");
+        assert_eq!(super::decode_base64("aGk=").unwrap(), b"hi");
+        assert_eq!(super::decode_base64("YWJj").unwrap(), b"abc");
+        assert!(super::decode_base64("***").is_none());
+    }
+}

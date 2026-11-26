@@ -25,13 +25,22 @@ pub mod store;
 pub const APP_NAME: &str = "Ivily Structura";
 pub const APP_VERSION: &str = env!("CARGO_PKG_VERSION");
 
+/// First command-line argument that is an existing directory (ivily-structura.exe C:\code\app).
+pub fn startup_path<I: IntoIterator<Item = String>>(args: I) -> Option<String> {
+    args.into_iter().skip(1).filter(|a| !a.starts_with('-')).find(|a| std::path::Path::new(a).is_dir())
+}
+
 pub fn run() {
     tauri::Builder::default()
-        .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
-            use tauri::Manager;
+        .plugin(tauri_plugin_single_instance::init(|app, args, _cwd| {
+            use tauri::{Emitter, Manager};
             if let Some(w) = app.get_webview_window("main") {
                 let _ = w.unminimize();
                 let _ = w.set_focus();
+            }
+            // A second launch with a folder argument opens that project in the running window.
+            if let Some(p) = startup_path(args) {
+                let _ = app.emit("open-path", p);
             }
         }))
         .plugin(tauri_plugin_dialog::init())
@@ -88,6 +97,7 @@ pub fn run() {
             commands::data::mapping_import,
             commands::data::report_preview,
             commands::data::report_export,
+            commands::data::file_export,
         ])
         .run(tauri::generate_context!())
         .expect("failed to start Ivily Structura");
