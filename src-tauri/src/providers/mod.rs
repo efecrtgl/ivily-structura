@@ -94,6 +94,8 @@ pub struct FileFacts {
     pub complexity: u32,
     /// Estimated: maximum block nesting depth.
     pub max_nesting: u32,
+    /// The file contains inline unit tests (Rust `#[test]`/`#[cfg(test)]`, Zig `test "..."`).
+    pub inline_tests: bool,
     pub lines: mask::LineStats,
 }
 

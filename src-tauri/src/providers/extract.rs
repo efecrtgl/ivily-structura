@@ -333,10 +333,33 @@ pub fn rust(_src: &str, code: &str, blank: &str, li: &LineIndex, f: &mut FileFac
             imp(f, li, g.start(), &c[1], ImportKind::Mod);
         }
     }
+    // Inline `mod name { ... }` blocks: `super::` inside them refers to the file's own module.
+    let mut inline_ranges: Vec<(usize, usize)> = Vec::new();
+    for m in re!(r"\bmod[ \t]+[A-Za-z_]\w*[ \t]*\{").find_iter(blank) {
+        let open = m.end() - 1;
+        let mut depth = 0i32;
+        let mut end = blank.len();
+        for (i, b) in blank.as_bytes()[open..].iter().enumerate() {
+            match b {
+                b'{' => depth += 1,
+                b'}' => {
+                    depth -= 1;
+                    if depth == 0 {
+                        end = open + i;
+                        break;
+                    }
+                }
+                _ => {}
+            }
+        }
+        inline_ranges.push((open, end));
+    }
     for c in re!(r"(?m)^[ \t]*(?:pub(?:\([^)]*\))?[ \t]+)?use[ \t]+([^;]+);").captures_iter(blank) {
         let g = c.get(1).unwrap();
+        let depth = inline_ranges.iter().filter(|(s, e)| *s < g.start() && g.start() < *e).count();
         for p in flatten_use(&c[1]) {
-            imp(f, li, g.start(), &p, ImportKind::Use);
+            let names = if depth > 0 { vec![format!("inline:{depth}")] } else { Vec::new() };
+            f.imports.push(ImportRef { spec: p, line: li.line_of(g.start()), kind: ImportKind::Use, names });
         }
     }
     for c in re!(r"\bextern[ \t]+crate[ \t]+([A-Za-z_]\w*)").captures_iter(blank) {
@@ -371,6 +394,7 @@ pub fn rust(_src: &str, code: &str, blank: &str, li: &LineIndex, f: &mut FileFac
     f.symbols.sort_by_key(|s| s.line);
     f.exports =
         f.symbols.iter().filter(|s| s.exported && s.kind != SymbolKind::Method).map(|s| s.name.clone()).collect();
+    f.inline_tests = re!(r"#\[(?:cfg\(test\)|test|tokio::test)\]").is_match(blank);
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -714,6 +738,7 @@ pub fn zig(_src: &str, code: &str, blank: &str, li: &LineIndex, f: &mut FileFact
         sym(f, li, c.get(2).unwrap().start(), &c[2], kind, c.get(1).is_some());
     }
     f.symbols.sort_by_key(|s| s.line);
+    f.inline_tests = re!(r#"(?m)^[ \t]*test[ \t]+"[^"]*"[ \t]*\{"#).is_match(code);
 }
 
 // ---------------------------------------------------------------------------------------------

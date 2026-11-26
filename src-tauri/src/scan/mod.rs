@@ -51,7 +51,7 @@ pub const DEFAULT_EXCLUDES: &[&str] = &[
     "zig-out",
 ];
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "camelCase", default)]
 pub struct ScanOptions {
     pub respect_gitignore: bool,

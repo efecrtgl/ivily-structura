@@ -3,12 +3,17 @@
 //! See `docs/ARCHITECTURE.md` for the module layout. Analysis modules (`scan`, `lang`,
 //! `providers`, `project`, ...) are plain Rust and do not depend on Tauri.
 
+pub mod analysis;
 pub mod core;
+pub mod deps;
 pub mod error;
+pub mod graph;
+pub mod health;
 pub mod iep;
 pub mod lang;
 pub mod project;
 pub mod providers;
+pub mod report;
 pub mod scan;
 
 pub const APP_NAME: &str = "Ivily Structura";
