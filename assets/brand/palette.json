@@ -1,0 +1,25 @@
+{
+  "product": "Ivily Structura",
+  "signal": {
+    "name": "Blueprint Azure",
+    "onDark": "#55AAFF",
+    "onLight": "#1A6BD1"
+  },
+  "neutrals": {
+    "ink": "#0B0B0D",
+    "graphite": "#141417",
+    "line": "#2A2A30",
+    "zinc500": "#71717A",
+    "zinc400": "#A1A1AA",
+    "mist": "#E4E4E7",
+    "paper": "#F4F4F5",
+    "white": "#FFFFFF",
+    "carbon": "#111113"
+  },
+  "typography": {
+    "display": "Instrument Sans (SIL OFL 1.1)",
+    "technical": "JetBrains Mono (SIL OFL 1.1)",
+    "appUi": "Segoe UI Variable (system)",
+    "appMono": "Cascadia Mono (system)"
+  }
+}
